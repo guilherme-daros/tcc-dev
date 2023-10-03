@@ -36,7 +36,7 @@ target_sources(hello_world
 
 target_link_libraries(
   hello_world
-  pico-tflmicro
+  tflmicro
 )
 
 pico_add_extra_outputs(hello_world)
