@@ -27,7 +27,7 @@ target_sources(hello_world
   ${CMAKE_CURRENT_LIST_DIR}/main.cpp
   ${CMAKE_CURRENT_LIST_DIR}/main_functions.cpp
   ${CMAKE_CURRENT_LIST_DIR}/model.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/rp2/output_handler.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/output_handler.cpp
   ${CMAKE_CURRENT_LIST_DIR}/constants.h
   ${CMAKE_CURRENT_LIST_DIR}/main_functions.h
   ${CMAKE_CURRENT_LIST_DIR}/model.h
@@ -37,7 +37,6 @@ target_sources(hello_world
 target_link_libraries(
   hello_world
   pico-tflmicro
-  hardware_pwm
 )
 
 pico_add_extra_outputs(hello_world)
