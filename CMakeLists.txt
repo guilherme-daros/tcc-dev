@@ -16,5 +16,6 @@ set(CMAKE_CXX_STANDARD 17)
 pico_sdk_init()
 
 include(tflmicro.cmake)
+include(ble.cmake)
 
 add_subdirectory("apps")
