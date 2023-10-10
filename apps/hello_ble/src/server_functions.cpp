@@ -1,6 +1,7 @@
 #include "server_functions.h"
 #include "btstack.h"
 #include "gatt_ht_server.h"
+#include "log.h"
 #include "math.h"
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
@@ -70,10 +71,16 @@ void temp_humi_handle(struct btstack_timer_source *ts) {
     if (true) {
       temp_i = (uint16_t)round(temp * 100);
       humi_i = (uint16_t)round(humi * 100);
+      logger::Log("Loop");
       printf("temp:%f, humi:%f\n", temp, humi);
       att_server_request_can_send_now_event(con_handle);
     }
   }
+
+  // Invert the led
+  static int led_on = true;
+  led_on = !led_on;
+  cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, led_on);
 
   btstack_run_loop_set_timer(ts, HEARTBEAT_PERIOD_MS);
   btstack_run_loop_add_timer(ts);

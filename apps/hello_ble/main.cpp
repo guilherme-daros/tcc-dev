@@ -1,5 +1,6 @@
-#include "gatt_ht_server.h"
 #include "btstack.h"
+#include "gatt_ht_server.h"
+#include "log.h"
 #include "math.h"
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
@@ -47,8 +48,7 @@ int main() {
   hci_power_control(HCI_POWER_ON);
 
   while (1) {
-    // tight_loop_contents();
-    printf("Hello, loop");
+    logger::Log("Loop");
     sleep_ms(1000);
   }
 

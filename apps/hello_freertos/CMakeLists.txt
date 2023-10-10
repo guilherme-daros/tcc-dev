@@ -20,6 +20,7 @@ target_sources(
 target_link_libraries(
         hello_freertos 
         pico_stdlib
+        pico_cyw43_arch_none
         FreeRTOS
 )
 
