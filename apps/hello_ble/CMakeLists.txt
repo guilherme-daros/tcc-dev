@@ -14,6 +14,8 @@ target_link_libraries(hello_ble
     pico_btstack_ble
 )
 
+include(${CMAKE_SOURCE_DIR}/cmake/ble.cmake)
+
 add_subdirectory("src")
 
 target_sources(
@@ -27,6 +29,7 @@ target_sources(
 # Add the standard include files to the build
 target_include_directories(
     hello_ble PRIVATE
+    ${CMAKE_SOURCE_DIR}/config
     ${CMAKE_CURRENT_LIST_DIR}/include
 )
 

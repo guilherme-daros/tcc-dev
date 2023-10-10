@@ -14,6 +14,8 @@ target_include_directories(hello_sin
 #   COMPILE_FLAGS -nostdlib
 # )
 
+include(${CMAKE_SOURCE_DIR}/cmake/tflmicro.cmake)
+
 add_subdirectory("src")
 
 target_sources(
