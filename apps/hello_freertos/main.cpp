@@ -1,12 +1,10 @@
-#include "config.h"
-#include "log.h"
-
 #include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
-#include "task.h"
-
+#include "config.h"
+#include "log.h"
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
+#include "task.h"
 
 int main() {
   stdio_init_all();
