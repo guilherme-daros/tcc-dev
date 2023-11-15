@@ -4,4 +4,5 @@
 #add_subdirectory("hello_freertos")
 #add_subdirectory("hello_mpu")
 #add_subdirectory("hello_AI")
-add_subdirectory("tcc_final")
+#add_subdirectory("tcc_final")
+add_subdirectory("tcc_ble")
