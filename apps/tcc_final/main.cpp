@@ -1,7 +1,8 @@
-#include "data_108.h"
+#include "data_432.h"
 #include "feature_extraction.h"
 #include "model2.h"
 
+#include "logger.h"
 #include "pico/runtime.h"
 #include "pico/stdlib.h"
 
@@ -31,7 +32,7 @@ int main(int argc, char *argv[]) {
   static tflite::MicroErrorReporter micro_error_reporter;
   error_reporter = &micro_error_reporter;
 
-  model = tflite::GetModel(lw4_md1);
+  model = tflite::GetModel(lw64_md8);
   if (model->version() != TFLITE_SCHEMA_VERSION) {
     std::cout << "Model provided is schema version " << model->version()
               << " not equal to supported version" << TFLITE_SCHEMA_VERSION
@@ -46,38 +47,42 @@ int main(int argc, char *argv[]) {
   interpreter = &static_interpreter;
 
   interpreter->AllocateTensors() == kTfLiteOk
-      ? std::cout << "AllocateTensors() succeded" << std::endl
-      : std::cout << "AllocateTensors() failed" << std::endl;
+      ? logger::Log("AllocateTensors() succeded")
+      : logger::Log("AllocateTensors() failed");
 
   // std::cout << "arena_used_bytes: " << interpreter->arena_used_bytes()
   //           << std::endl;
 
-  static data_window<int, 108> dw;
+  static data_window<int, 432> dw;
   static int read_count = 0;
 
   while (true) {
     if (!dw.is_ready()) {
 
-      auto [x, y, z] = vec108[read_count];
+      auto [x, y, z] = vec432[read_count];
       dw.add(x, y, z);
       read_count++;
 
     } else {
 
-      auto data = get_features<int, 108>(dw);
+      auto start = time_us_64();
+      auto data = get_features<int, 432>(dw);
+      std::cout << "Took " << time_us_64() - start << " us to get_features"
+                << std::endl;
 
+      start = time_us_64();
       std::copy(data.begin(), data.end(),
                 interpreter->typed_input_tensor<float>(0));
-      auto start = std::chrono::system_clock::now();
-      interpreter->Invoke() == kTfLiteOk
-          ? std::cout << "Invoke() succeded" << std::endl
-          : std::cout << "Invoke() failed" << std::endl;
-      auto end = std::chrono::system_clock::now();
-      std::cout << "Invoke duration: "
-                << std::chrono::duration_cast<std::chrono::seconds>(end - start)
-                       .count()
+      std::cout << "Took " << time_us_64() - start << " us to copy data"
                 << std::endl;
-      const float *output_data = interpreter->typed_output_tensor<float>(0);
+
+      start = time_us_64();
+      interpreter->Invoke();
+      std::cout << "Took " << time_us_64() - start << " us to run model"
+                << std::endl;
+
+      dw.reset();
+      sleep_ms(10000);
     }
   }
 }

@@ -1,7 +1,7 @@
 target_sources(
     tcc_final
     PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}/lw4_md1.cc
+    # ${CMAKE_CURRENT_LIST_DIR}/lw4_md1.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw4_md2.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw4_md4.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw4_md8.cc
@@ -20,5 +20,5 @@ target_sources(
     # ${CMAKE_CURRENT_LIST_DIR}/lw64_md1.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw64_md2.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw64_md4.cc
-    # ${CMAKE_CURRENT_LIST_DIR}/lw64_md8.cc
+    ${CMAKE_CURRENT_LIST_DIR}/lw64_md8.cc
 )

@@ -21,9 +21,9 @@ template <class T, int size = 54> struct data_window {
   bool is_ready() { return count == size - 1; }
 
   void reset() {
-    x_.reset();
-    y_.reset();
-    z_.reset();
+    std::fill(x_.begin(), x_.end(), 0);
+    std::fill(y_.begin(), y_.end(), 0);
+    std::fill(z_.begin(), z_.end(), 0);
     count = 0;
   }
 
