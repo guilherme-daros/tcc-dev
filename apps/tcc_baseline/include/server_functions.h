@@ -11,10 +11,12 @@
 
 extern uint8_t adv_data[];
 extern uint8_t adv_data_len;
-extern float temp;
-extern float humi;
-extern uint16_t temp_i, humi_i;
+
+extern float activity;
+extern uint16_t activity_i;
+
 extern bool le_notification_enabled;
+
 extern hci_con_handle_t con_handle;
 extern btstack_packet_callback_registration_t hci_event_callback_registration;
 extern btstack_timer_source_t activity_summary_noti;
@@ -31,3 +33,5 @@ void activity_summary_handle(struct btstack_timer_source *ts);
 
 void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet,
                     uint16_t size);
+
+void init_ble_service();
