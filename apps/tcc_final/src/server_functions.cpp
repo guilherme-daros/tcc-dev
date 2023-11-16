@@ -71,10 +71,6 @@ void activity_summary_handle(struct btstack_timer_source *ts) {
     activity_i = (uint16_t)round(activity);
     att_server_request_can_send_now_event(con_handle);
   }
-
-  // Set timer to start next call
-  btstack_run_loop_set_timer(ts, HEARTBEAT_PERIOD_MS);
-  btstack_run_loop_add_timer(ts);
 }
 
 void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet,
@@ -82,10 +78,6 @@ void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet,
 
   UNUSED(channel);
   UNUSED(size);
-
-  static int8_t buf[] = {
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  };
 
   if (packet_type != HCI_EVENT_PACKET)
     return;
@@ -99,7 +91,7 @@ void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet,
     att_server_notify(
         con_handle,
         ATT_CHARACTERISTIC_ORG_BLUETOOTH_CHARACTERISTIC_GENERAL_ACTIVITY_SUMMARY_DATA_01_VALUE_HANDLE,
-        (uint8_t *)buf, 12);
+        (uint8_t *)&activity_i, 2);
     break;
   default:
     break;
@@ -138,9 +130,9 @@ void init_ble_service() {
   att_server_register_packet_handler(packet_handler);
 
   // set  timer
-  activity_summary_noti.process = &activity_summary_handle;
-  btstack_run_loop_set_timer(&activity_summary_noti, HEARTBEAT_PERIOD_MS);
-  btstack_run_loop_add_timer(&activity_summary_noti);
+  // activity_summary_noti.process = &activity_summary_handle;
+  // btstack_run_loop_set_timer(&activity_summary_noti, HEARTBEAT_PERIOD_MS);
+  // btstack_run_loop_add_timer(&activity_summary_noti);
 
   hci_power_control(HCI_POWER_ON);
 }
