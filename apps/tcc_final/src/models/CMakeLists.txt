@@ -8,7 +8,7 @@ target_sources(
     # ${CMAKE_CURRENT_LIST_DIR}/lw8_md1.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw8_md2.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw8_md4.cc
-    # ${CMAKE_CURRENT_LIST_DIR}/lw8_md8.cc
+     ${CMAKE_CURRENT_LIST_DIR}/lw8_md8.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw16_md1.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw16_md2.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw16_md4.cc
@@ -20,5 +20,5 @@ target_sources(
     # ${CMAKE_CURRENT_LIST_DIR}/lw64_md1.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw64_md2.cc
     # ${CMAKE_CURRENT_LIST_DIR}/lw64_md4.cc
-    ${CMAKE_CURRENT_LIST_DIR}/lw64_md8.cc
+    # ${CMAKE_CURRENT_LIST_DIR}/lw64_md8.cc
 )

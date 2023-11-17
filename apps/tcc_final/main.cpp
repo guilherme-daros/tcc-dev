@@ -1,4 +1,4 @@
-#include "data_54.h"
+#include "data_432.h"
 #include "feature_extraction.h"
 #include "model2.h"
 #include "server_functions.h"
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
         static tflite::MicroErrorReporter micro_error_reporter;
         error_reporter = &micro_error_reporter;
 
-        model = tflite::GetModel(lw64_md8);
+        model = tflite::GetModel(lw8_md8);
         if (model->version() != TFLITE_SCHEMA_VERSION) {
           std::cout << "Model provided is schema version " << model->version()
                     << " not equal to supported version"
@@ -72,13 +72,13 @@ int main(int argc, char *argv[]) {
         logger::Log(buf);
         memset(buf, 0, kBufferSize);
 
-        static data_window<int, 54> dw;
+        static data_window<int, 432> dw;
         static int read_count = 0;
 
         while (true) {
           if (!dw.is_ready()) {
 
-            auto [x, y, z] = vec54[read_count];
+            auto [x, y, z] = vec432[read_count];
             dw.add(x, y, z);
             read_count++;
 
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 
             auto start = time_us_64();
 
-            auto data = get_features<int, 54>(dw);
+            auto data = get_features<int, 432>(dw);
             sprintf(buf, "Took %d us to get_features", time_us_64() - start);
             logger::Log(buf);
             memset(buf, 0, kBufferSize);
