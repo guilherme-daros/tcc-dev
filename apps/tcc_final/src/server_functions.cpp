@@ -1,11 +1,24 @@
 #include "server_functions.h"
 #include "btstack.h"
+#include "data_54.h"
+#include "feature_extraction.h"
 #include "log.h"
 #include "math.h"
 #include "physical_activity_monitor.h"
+
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
+
+#include <array>
+#include <chrono>
+#include <iostream>
+
 #include <stdio.h>
+
+namespace {
+constexpr int kBufferSize = 100;
+char buf[kBufferSize];
+} // namespace
 
 // clang-format off
 uint8_t adv_data[] = {
@@ -64,15 +77,59 @@ int att_write_callback(hci_con_handle_t connection_handle, uint16_t att_handle,
 }
 
 void activity_summary_handle(struct btstack_timer_source *ts) {
-
   // Notify if enable
   if (le_notification_enabled) {
-    activity = 0;
+    static data_window<int, 54> dw;
+    static int read_count = 0;
+
+    while (!dw.is_ready()) {
+      auto [x, y, z] = vec54[read_count];
+      dw.add(x, y, z);
+      read_count++;
+    }
+    logger::Log("Finished reading data");
+
+    auto start = time_us_64();
+
+    auto data = get_features<int, 54>(dw);
+    sprintf(buf, "Took %d us to get_features", time_us_64() - start);
+    logger::Log(buf);
+    memset(buf, 0, kBufferSize);
+
+    start = time_us_64();
+    std::copy(data.begin(), data.end(),
+              interpreter->typed_input_tensor<float>(0));
+    sprintf(buf, "Took %d us to copy data", time_us_64() - start);
+    logger::Log(buf);
+    memset(buf, 0, kBufferSize);
+
+    start = time_us_64();
+    interpreter->Invoke();
+    sprintf(buf, "Took %d us to run model", time_us_64() - start);
+    logger::Log(buf);
+    memset(buf, 0, kBufferSize);
+
+    auto output_index = interpreter->outputs()[0];
+    const float *output_data = interpreter->typed_tensor<float>(output_index);
+
+    int top_class = 0;
+    float max_score = output_data[0];
+    for (int i = 1; i < interpreter->tensor(output_index)->dims->data[1]; i++) {
+      if (output_data[i] > max_score) {
+        max_score = output_data[i];
+        top_class = i;
+      }
+    }
+
+    activity = top_class;
+
     activity_i = (uint16_t)round(activity);
     att_server_request_can_send_now_event(con_handle);
   }
-}
 
+  btstack_run_loop_set_timer(ts, HEARTBEAT_PERIOD_MS);
+  btstack_run_loop_add_timer(ts);
+}
 void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet,
                     uint16_t size) {
 
@@ -96,43 +153,4 @@ void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet,
   default:
     break;
   }
-}
-
-void init_ble_service() {
-  if (cyw43_arch_init()) {
-    printf("cyw43_init error\n");
-    return;
-  }
-
-  l2cap_init();
-  sm_init();
-
-  // setup advertisements
-  uint16_t adv_int_min = 0x0030;
-  uint16_t adv_int_max = 0x0030;
-  uint8_t adv_type = 0;
-  bd_addr_t null_addr;
-  memset(null_addr, 0, 6);
-
-  gap_advertisements_set_params(adv_int_min, adv_int_max, adv_type, 0,
-                                null_addr, 0, 0x00);
-  gap_advertisements_set_data(adv_data_len, (uint8_t *)adv_data);
-  gap_advertisements_enable(1);
-
-  // setup ATT server
-  att_server_init(profile_data, att_read_callback, att_write_callback);
-
-  // register for HCI events
-  hci_event_callback_registration.callback = &packet_handler;
-  hci_add_event_handler(&hci_event_callback_registration);
-
-  // register for ATT event
-  att_server_register_packet_handler(packet_handler);
-
-  // set  timer
-  // activity_summary_noti.process = &activity_summary_handle;
-  // btstack_run_loop_set_timer(&activity_summary_noti, HEARTBEAT_PERIOD_MS);
-  // btstack_run_loop_add_timer(&activity_summary_noti);
-
-  hci_power_control(HCI_POWER_ON);
 }

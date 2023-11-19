@@ -3,6 +3,9 @@
 #include "btstack.h"
 #include "math.h"
 #include "physical_activity_monitor.h"
+
+#include "tensorflow/lite/micro/micro_interpreter.h"
+
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
 #include <stdio.h>
@@ -20,6 +23,8 @@ extern bool le_notification_enabled;
 extern hci_con_handle_t con_handle;
 extern btstack_packet_callback_registration_t hci_event_callback_registration;
 extern btstack_timer_source_t activity_summary_noti;
+
+extern tflite::MicroInterpreter *interpreter;
 
 uint16_t att_read_callback(hci_con_handle_t connection_handle,
                            uint16_t att_handle, uint16_t offset,

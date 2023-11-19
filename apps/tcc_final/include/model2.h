@@ -27,6 +27,15 @@ extern const int lw16_md4_len;
 extern const unsigned char lw16_md8[];
 extern const int lw16_md8_len;
 
+extern const unsigned char lw32_md1[];
+extern const int lw32_md1_len;
+extern const unsigned char lw32_md2[];
+extern const int lw32_md2_len;
+extern const unsigned char lw32_md4[];
+extern const int lw32_md4_len;
+extern const unsigned char lw32_md8[];
+extern const int lw32_md8_len;
+
 extern const unsigned char lw64_md1[];
 extern const int lw64_md1_len;
 extern const unsigned char lw64_md2[];

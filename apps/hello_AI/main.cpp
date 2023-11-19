@@ -70,8 +70,6 @@ int main(int argc, char *argv[]) {
   auto output_index = interpreter->outputs()[0];
   const float *output_data = interpreter->typed_tensor<float>(output_index);
 
-  // Post-process the output (depends on the model and task)
-  // For image classification, you might want to find the top class label
   int top_class = 0;
   float max_score = output_data[0];
   for (int i = 1; i < interpreter->tensor(output_index)->dims->data[1]; i++) {

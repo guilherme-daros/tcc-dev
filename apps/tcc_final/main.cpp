@@ -1,14 +1,3 @@
-#include "data_432.h"
-#include "feature_extraction.h"
-#include "model2.h"
-#include "server_functions.h"
-
-#include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
-#include "task.h"
-
-#include "logger.h"
-
 #include "pico/runtime.h"
 #include "pico/stdlib.h"
 #include "pico/time.h"
@@ -19,11 +8,10 @@
 #include "tensorflow/lite/schema/schema_generated.h"
 #include "tensorflow/lite/version.h"
 
-#include <array>
-#include <chrono>
-#include <iostream>
+#include "logger.h"
+#include "model2.h"
+#include "server_functions.h"
 
-namespace {
 tflite::ErrorReporter *error_reporter = nullptr;
 tflite::MicroInterpreter *interpreter = nullptr;
 const tflite::Model *model = nullptr;
@@ -34,105 +22,74 @@ uint8_t tensor_arena[kTensorArenaSize];
 constexpr int kBufferSize = 100;
 char buf[kBufferSize];
 
-TaskHandle_t tflite_task = NULL;
-TaskHandle_t blink_led_task = NULL;
-
-} // namespace
-
 int main(int argc, char *argv[]) {
   stdio_init_all();
   sleep_ms(2000);
 
-  init_ble_service();
+  if (cyw43_arch_init()) {
+    printf("cyw43_init error\n");
+    return -1;
+  }
 
-  xTaskCreate(
-      [](void *param) {
-        static tflite::MicroErrorReporter micro_error_reporter;
-        error_reporter = &micro_error_reporter;
+  l2cap_init();
+  sm_init();
 
-        model = tflite::GetModel(lw8_md8);
-        if (model->version() != TFLITE_SCHEMA_VERSION) {
-          std::cout << "Model provided is schema version " << model->version()
-                    << " not equal to supported version"
-                    << TFLITE_SCHEMA_VERSION << std::endl;
-        }
+  // setup advertisements
+  uint16_t adv_int_min = 0x0030;
+  uint16_t adv_int_max = 0x0030;
+  uint8_t adv_type = 0;
+  bd_addr_t null_addr;
+  memset(null_addr, 0, 6);
 
-        static tflite::AllOpsResolver resolver;
+  gap_advertisements_set_params(adv_int_min, adv_int_max, adv_type, 0,
+                                null_addr, 0, 0x00);
+  gap_advertisements_set_data(adv_data_len, (uint8_t *)adv_data);
+  gap_advertisements_enable(1);
 
-        static tflite::MicroInterpreter static_interpreter(
-            model, resolver, tensor_arena, kTensorArenaSize, error_reporter);
+  // setup ATT server
+  att_server_init(profile_data, att_read_callback, att_write_callback);
 
-        interpreter = &static_interpreter;
+  // register for HCI events
+  hci_event_callback_registration.callback = &packet_handler;
+  hci_add_event_handler(&hci_event_callback_registration);
 
-        interpreter->AllocateTensors() == kTfLiteOk
-            ? logger::Log("AllocateTensors() succeded")
-            : logger::Log("AllocateTensors() failed");
+  // register for ATT event
+  att_server_register_packet_handler(packet_handler);
 
-        sprintf(buf, "arena_used_bytes %d ", interpreter->arena_used_bytes());
-        logger::Log(buf);
-        memset(buf, 0, kBufferSize);
+  static tflite::MicroErrorReporter micro_error_reporter;
+  error_reporter = &micro_error_reporter;
 
-        static data_window<int, 432> dw;
-        static int read_count = 0;
+  model = tflite::GetModel(lw4_md1);
+  if (model->version() != TFLITE_SCHEMA_VERSION) {
+    std::cout << "Model provided is schema version " << model->version()
+              << " not equal to supported version" << TFLITE_SCHEMA_VERSION
+              << std::endl;
+  }
 
-        while (true) {
-          if (!dw.is_ready()) {
+  static tflite::AllOpsResolver resolver;
 
-            auto [x, y, z] = vec432[read_count];
-            dw.add(x, y, z);
-            read_count++;
+  static tflite::MicroInterpreter static_interpreter(
+      model, resolver, tensor_arena, kTensorArenaSize, error_reporter);
 
-          } else {
+  interpreter = &static_interpreter;
 
-            logger::Log("Finished reading data");
+  interpreter->AllocateTensors() == kTfLiteOk
+      ? logger::Log("AllocateTensors() succeded")
+      : logger::Log("AllocateTensors() failed");
 
-            auto start = time_us_64();
+  sprintf(buf, "arena_used_bytes %d ", interpreter->arena_used_bytes());
+  logger::Log(buf);
+  memset(buf, 0, kBufferSize);
 
-            auto data = get_features<int, 432>(dw);
-            sprintf(buf, "Took %d us to get_features", time_us_64() - start);
-            logger::Log(buf);
-            memset(buf, 0, kBufferSize);
+  // set  timer
+  activity_summary_noti.process = &activity_summary_handle;
+  btstack_run_loop_set_timer(&activity_summary_noti, HEARTBEAT_PERIOD_MS);
+  btstack_run_loop_add_timer(&activity_summary_noti);
 
-            start = time_us_64();
-            std::copy(data.begin(), data.end(),
-                      interpreter->typed_input_tensor<float>(0));
-            sprintf(buf, "Took %d us to copy data", time_us_64() - start);
-            logger::Log(buf);
-            memset(buf, 0, kBufferSize);
+  logger::Log("Turning power on");
+  hci_power_control(HCI_POWER_ON);
 
-            start = time_us_64();
-            interpreter->Invoke();
-            sprintf(buf, "Took %d us to run model", time_us_64() - start);
-            logger::Log(buf);
-            memset(buf, 0, kBufferSize);
-
-            dw.reset();
-            read_count = 0;
-            vTaskDelay(10000);
-          }
-        }
-      },
-      "TFLite Task", 1024, NULL, 1, &tflite_task);
-
-  xTaskCreate(
-      [](void *param) {
-        while (true) {
-          activity_summary_handle(&activity_summary_noti);
-          vTaskDelay(10000);
-        }
-      },
-      "BLE Task", 1024, NULL, 2, &blink_led_task);
-
-  xTaskCreate(
-      [](void *param) {
-        int led_on = true;
-        while (true) {
-          led_on = !led_on;
-          cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, led_on);
-          vTaskDelay(1000);
-        }
-      },
-      "Blink Led Task", 1024, NULL, tskIDLE_PRIORITY, &blink_led_task);
-
-  vTaskStartScheduler();
+  while (true) {
+    tight_loop_contents();
+  }
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "log.h"
 
 #include <array>
 #include <functional>
@@ -18,7 +19,7 @@ template <class T, int size = 54> struct data_window {
     count++;
   }
 
-  bool is_ready() { return count == size - 1; }
+  bool is_ready() { return count >= size - 1; }
 
   void reset() {
     std::fill(x_.begin(), x_.end(), 0);
