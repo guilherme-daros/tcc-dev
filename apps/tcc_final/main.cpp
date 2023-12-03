@@ -60,6 +60,7 @@ int main(int argc, char *argv[]) {
   error_reporter = &micro_error_reporter;
 
   model = tflite::GetModel(lw4_md1);
+
   if (model->version() != TFLITE_SCHEMA_VERSION) {
     std::cout << "Model provided is schema version " << model->version()
               << " not equal to supported version" << TFLITE_SCHEMA_VERSION

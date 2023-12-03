@@ -14,10 +14,13 @@ int main() {
 
   init_ble_service();
 
+  // while (true) {
+  //   led_on = !led_on;
+  //   cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, led_on);
+  //   sleep_ms(1000);
+  //
   while (true) {
-    led_on = !led_on;
-    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, led_on);
-    sleep_ms(1000);
+    tight_loop_contents();
   }
 
   return 0;

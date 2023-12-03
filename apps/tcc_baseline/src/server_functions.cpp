@@ -84,7 +84,8 @@ void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet,
   UNUSED(size);
 
   static int8_t buf[] = {
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   };
 
   if (packet_type != HCI_EVENT_PACKET)
@@ -99,7 +100,7 @@ void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet,
     att_server_notify(
         con_handle,
         ATT_CHARACTERISTIC_ORG_BLUETOOTH_CHARACTERISTIC_GENERAL_ACTIVITY_SUMMARY_DATA_01_VALUE_HANDLE,
-        (uint8_t *)buf, 12);
+        (uint8_t *)buf, 20);
     break;
   default:
     break;

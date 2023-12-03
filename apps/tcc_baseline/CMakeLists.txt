@@ -1,7 +1,7 @@
 add_executable(tcc_baseline "")
 
 pico_enable_stdio_uart(tcc_baseline 0)
-pico_enable_stdio_usb(tcc_baseline 1)
+pico_enable_stdio_usb(tcc_baseline 0)
 
 # Add the standard library to the build
 target_link_libraries(tcc_baseline

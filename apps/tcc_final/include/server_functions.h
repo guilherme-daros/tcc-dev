@@ -10,7 +10,7 @@
 #include "pico/stdlib.h"
 #include <stdio.h>
 
-#define HEARTBEAT_PERIOD_MS 10000
+#define HEARTBEAT_PERIOD_MS 500
 
 extern uint8_t adv_data[];
 extern uint8_t adv_data_len;
