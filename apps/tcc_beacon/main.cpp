@@ -13,7 +13,7 @@ namespace {
 //  Minimum advertising interval for undirected
 //  and low duty cycle directed advertising.
 //  Range: 0x0020 to 0x4000
-//  Time = N * 0.625 msec
+//  Time = N * 0.625 ms
 //  Time Range: 20 ms to 10.24 sec
 constexpr uint16_t adv_interval = 0x0020;
 } // namespace
@@ -52,7 +52,7 @@ int main() {
 
         while (true) {
           adv_temp_humi_handler(&adv_temp_humi);
-          // hci_power_control(HCI_POWER_OFF);
+          hci_power_control(HCI_POWER_OFF);
           vTaskDelay(10000);
         }
       },
