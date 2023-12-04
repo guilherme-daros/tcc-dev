@@ -9,6 +9,15 @@
 #include "FreeRTOSConfig.h"
 #include "task.h"
 
+namespace {
+//  Minimum advertising interval for undirected
+//  and low duty cycle directed advertising.
+//  Range: 0x0020 to 0x4000
+//  Time = N * 0.625 msec
+//  Time Range: 20 ms to 10.24 sec
+constexpr uint16_t adv_interval = 0x0020;
+} // namespace
+
 int main() {
   stdio_init_all();
 
@@ -27,11 +36,12 @@ int main() {
   xTaskCreate(
       [](void *param) {
         // setup advertisements
-        uint16_t adv_int_min = 0x0020;
-        uint16_t adv_int_max = 0x0020;
+        constexpr uint16_t adv_int_min = adv_interval;
+        constexpr uint16_t adv_int_max = adv_interval;
 
-        uint8_t adv_type = 2; // only advertisement, not connectable.
+        constexpr uint8_t adv_type = 2; // only advertisement, not connectable.
         bd_addr_t null_addr;
+
         memset(null_addr, 0, 6);
         gap_advertisements_set_params(adv_int_min, adv_int_max, adv_type, 0,
                                       null_addr, 0x07, 0x00);
@@ -42,7 +52,6 @@ int main() {
 
         while (true) {
           adv_temp_humi_handler(&adv_temp_humi);
-          // vTaskDelay(100);
           // hci_power_control(HCI_POWER_OFF);
           vTaskDelay(10000);
         }

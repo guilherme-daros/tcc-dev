@@ -15,7 +15,8 @@ extern uint8_t adv_data[];
 extern uint8_t adv_data_len;
 
 extern btstack_timer_source_t adv_temp_humi;
-extern uint8_t temp;
-extern uint8_t humi;
+extern uint8_t acc_x;
+extern uint8_t acc_y;
+extern uint8_t acc_z;
 
 void adv_temp_humi_handler(struct btstack_timer_source *ts);
