@@ -5,6 +5,16 @@
 
 #include <stdio.h>
 
+namespace {
+//  Minimum advertising interval for undirected
+//  and low duty cycle directed advertising.
+//  Range: 0x0020 to 0x4000
+//  Time = N * 0.625 ms
+//  Time Range: 20 ms to 10.24 sec
+//  Set to minimum because we're controlling this stuff with delays
+constexpr uint16_t adv_interval = 0x0020;
+} // namespace
+
 // clang-format off
 uint8_t adv_data[] = {
     0x02, BLUETOOTH_DATA_TYPE_FLAGS, 0x06,
@@ -32,4 +42,27 @@ void adv_temp_humi_handler(struct btstack_timer_source *ts) {
 
   // btstack_run_loop_set_timer(ts, ADV_TEMP_HUMI_PERIOD_MS);
   // btstack_run_loop_add_timer(ts);
+}
+
+void ble_init_all() {
+  if (cyw43_arch_init()) {
+    printf("cyw43_init error\n");
+    return;
+  }
+
+  l2cap_init();
+  sm_init();
+  constexpr uint16_t adv_int_min = adv_interval;
+  constexpr uint16_t adv_int_max = adv_interval;
+
+  constexpr uint8_t adv_type = 2; // only advertisement, not connectable.
+  bd_addr_t null_addr;
+
+  memset(null_addr, 0, 6);
+  gap_advertisements_set_params(adv_int_min, adv_int_max, adv_type, 0,
+                                null_addr, 0x07, 0x00);
+  gap_advertisements_set_data(adv_data_len, (uint8_t *)adv_data);
+  gap_advertisements_enable(true);
+
+  adv_temp_humi_handler(&adv_temp_humi);
 }

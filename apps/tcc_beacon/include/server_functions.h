@@ -20,3 +20,5 @@ extern uint8_t acc_y;
 extern uint8_t acc_z;
 
 void adv_temp_humi_handler(struct btstack_timer_source *ts);
+
+void ble_init_all();

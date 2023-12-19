@@ -2,6 +2,7 @@
 #include "logger.h"
 
 #include <array>
+#include <cmath>
 #include <functional>
 #include <numeric>
 #include <string>
@@ -36,29 +37,42 @@ template <class T, int size = 54> struct data_window {
 
 template <class T, int size = 54, int n_feats = 5, int n_axis = 3>
 std::array<float, n_feats * n_axis>
-get_features(const data_window<int, size> &data) {
+get_features(const data_window<T, size> &data) {
 
   static std::unordered_map<std::string,
                             std::function<float(std::array<T, size>)>>
-      feature_funcs = {{"sum",
-                        [](std::array<T, size> p) {
-                          return std::accumulate(p.begin(), p.end(), 0);
-                        }},
-                       {"mean",
-                        [](std::array<T, size> p) {
-                          return std::accumulate(p.begin(), p.end(), 0);
-                        }},
-                       {"max",
-                        [](std::array<T, size> p) {
-                          return std::accumulate(p.begin(), p.end(), 0);
-                        }},
-                       {"min",
-                        [](std::array<T, size> p) {
-                          return std::accumulate(p.begin(), p.end(), 0);
-                        }},
-                       {"std", [](std::array<T, size> p) {
-                          return std::accumulate(p.begin(), p.end(), 0);
-                        }}};
+      feature_funcs = {
+          {"sum",
+           [](std::array<T, size> p) {
+             return std::accumulate(p.begin(), p.end(), 0);
+           }},
+          {"mean",
+           [](std::array<T, size> p) {
+             auto sum = std::accumulate(p.begin(), p.end(), 0);
+             auto sz = p.size();
+             return static_cast<float>(sum);
+           }},
+          {"max",
+           [](std::array<T, size> p) {
+             return *std::max_element(p.begin(), p.end());
+           }},
+          {"min",
+           [](std::array<T, size> p) {
+             return *std::min_element(p.begin(), p.end());
+           }},
+          {"std", [](std::array<T, size> p) {
+             auto sz = p.size();
+             auto mean = std::accumulate(p.begin(), p.end(), 0.0) / sz;
+
+             auto variance_func = [&mean, &sz](T accumulator, const T &val) {
+               return accumulator + ((val - mean) * (val - mean) / (sz - 1));
+             };
+
+             auto variance =
+                 std::accumulate(p.begin(), p.end(), 0.0, variance_func);
+
+             return std::sqrt(variance);
+           }}};
 
   std::array<float, n_feats *n_axis> ret = {};
 
