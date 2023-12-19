@@ -48,12 +48,12 @@ int main() {
         gap_advertisements_set_data(adv_data_len, (uint8_t *)adv_data);
         gap_advertisements_enable(true);
 
-        hci_power_control(HCI_POWER_ON);
-
         while (true) {
+          hci_power_control(HCI_POWER_ON);
+          vTaskDelay(100);
           adv_temp_humi_handler(&adv_temp_humi);
           hci_power_control(HCI_POWER_OFF);
-          vTaskDelay(10000);
+          vTaskDelay(9900);
         }
       },
       "Adv Task", 1024, NULL, tskIDLE_PRIORITY, &adv_task);
