@@ -1,1 +1,1 @@
-target_sources(tcc_final PUBLIC ${CMAKE_CURRENT_LIST_DIR}/lw4_md1.cc)
+target_sources(tcc_final PUBLIC ${CMAKE_CURRENT_LIST_DIR}/lw64_md8.cc)

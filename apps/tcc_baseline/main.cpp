@@ -14,8 +14,8 @@ namespace {
 // Logging stuff
 constexpr int kBufferSize = 100;
 char buf[kBufferSize];
-constexpr int kTxFrequency = 40; // max_value = 40
-constexpr int kTxInterval = 1000 * 1 / kTxFrequency;
+constexpr int kTxFrequency = 1;        // max_value = 40
+constexpr int kTxInterval = 1000 * 10; // 1 / kTxFrequency;
 
 //  Minimum advertising interval for undirected
 //  and low duty cycle directed advertising.
@@ -25,6 +25,8 @@ constexpr int kTxInterval = 1000 * 1 / kTxFrequency;
 //  Set to minimum because we're controlling this stuff with delays
 constexpr uint16_t adv_interval =
     0x0020 + static_cast<int>((kTxInterval - 20) / 0.625);
+
+// constexpr uint16_t adv_interval = 0x0020;
 
 } // namespace
 

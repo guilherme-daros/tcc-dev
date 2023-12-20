@@ -127,7 +127,7 @@ void activity_summary_handle(struct btstack_timer_source *ts) {
     att_server_request_can_send_now_event(con_handle);
   }
 
-  btstack_run_loop_set_timer(ts, HEARTBEAT_PERIOD_MS);
+  btstack_run_loop_set_timer(ts, kTxInterval);
   btstack_run_loop_add_timer(ts);
 }
 void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet,

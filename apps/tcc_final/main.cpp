@@ -35,8 +35,8 @@ int main(int argc, char *argv[]) {
   sm_init();
 
   // setup advertisements
-  uint16_t adv_int_min = 0x0030;
-  uint16_t adv_int_max = 0x0030;
+  uint16_t adv_int_min = adv_interval;
+  uint16_t adv_int_max = adv_interval;
   uint8_t adv_type = 0;
   bd_addr_t null_addr;
   memset(null_addr, 0, 6);
@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
   static tflite::MicroErrorReporter micro_error_reporter;
   error_reporter = &micro_error_reporter;
 
-  model = tflite::GetModel(lw4_md1);
+  model = tflite::GetModel(lw64_md8);
 
   if (model->version() != TFLITE_SCHEMA_VERSION) {
     std::cout << "Model provided is schema version " << model->version()
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 
   // set  timer
   activity_summary_noti.process = &activity_summary_handle;
-  btstack_run_loop_set_timer(&activity_summary_noti, HEARTBEAT_PERIOD_MS);
+  btstack_run_loop_set_timer(&activity_summary_noti, kTxInterval);
   btstack_run_loop_add_timer(&activity_summary_noti);
 
   logger::Log("Turning power on");

@@ -12,6 +12,19 @@
 
 #define HEARTBEAT_PERIOD_MS 500
 
+namespace {
+constexpr int kTxFrequency = 1;       // max_value = 40
+constexpr int kTxInterval = 1000 * 5; // 1 / kTxFrequency;
+//  Minimum advertising interval for undirected
+//  and low duty cycle directed advertising.
+//  Range: 0x0020 to 0x4000
+//  Time = N * 0.625 ms
+//  Time Range: 20 ms to 10.24 sec
+//  Set to minimum because we're controlling this stuff with delays
+constexpr uint16_t adv_interval =
+    0x0020 + static_cast<int>((kTxInterval - 20) / 0.625);
+} // namespace
+
 extern uint8_t adv_data[];
 extern uint8_t adv_data_len;
 

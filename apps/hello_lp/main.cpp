@@ -30,9 +30,9 @@ void recover_from_sleep(uint scb_orig, uint clock0_orig, uint clock1_orig) {
 }
 
 int main() {
-  if (cyw43_arch_init()) {
-    return -1;
-  }
+  // if (cyw43_arch_init()) {
+  //   return -1;
+  // }
 
   // save values for later
   uint scb_orig = scb_hw->scr;
@@ -60,16 +60,16 @@ int main() {
   // Start the Real time clock
   rtc_init();
 
-  cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+  // cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
   sleep_ms(5000);
 
-  cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
+  // cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
   sleep_run_from_xosc();
   rtc_set_datetime(&t);
   sleep_goto_sleep_until(&t_alarm, cb);
   recover_from_sleep(scb_orig, clock0_orig, clock1_orig);
 
-  cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+  // cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
   while (true) {
     tight_loop_contents();
   };
