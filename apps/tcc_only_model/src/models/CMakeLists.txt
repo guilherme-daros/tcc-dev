@@ -1,0 +1,1 @@
+target_sources(tcc_only_model PUBLIC ${CMAKE_CURRENT_LIST_DIR}/lw64_md8.cc)
