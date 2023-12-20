@@ -18,11 +18,14 @@ target_link_libraries(
         hello_lp 
         pico_stdlib
         hardware_sleep
+        hardware_clocks
+        hardware_rosc
+        hardware_rtc
         pico_cyw43_arch_none
 
 )
 
-pico_enable_stdio_usb(hello_lp 1)
+pico_enable_stdio_usb(hello_lp 0)
 pico_enable_stdio_uart(hello_lp 0)
 
 # create map/bin/hex/uf2 file etc.

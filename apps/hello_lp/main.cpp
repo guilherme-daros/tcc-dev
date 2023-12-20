@@ -55,10 +55,13 @@ int main() {
                         .dotw = 5, // 0 is Sunday, so 5 is Friday
                         .hour = 15,
                         .min = 45,
-                        .sec = 5};
+                        .sec = 10};
 
   // Start the Real time clock
   rtc_init();
+
+  cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+  sleep_ms(5000);
 
   cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
   sleep_run_from_xosc();
@@ -67,12 +70,7 @@ int main() {
   recover_from_sleep(scb_orig, clock0_orig, clock1_orig);
 
   cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-  sleep_run_from_xosc();
-  rtc_set_datetime(&t);
-  sleep_goto_sleep_until(&t_alarm, cb);
-  recover_from_sleep(scb_orig, clock0_orig, clock1_orig);
-
-  watchdog_enable(1, 1);
-  while (1)
-    ;
+  while (true) {
+    tight_loop_contents();
+  };
 }
