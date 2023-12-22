@@ -1,0 +1,29 @@
+2 coisas consomem energia:
+  Rádio       -> Transmissão, só consome enquanto está transmitindo
+  Processador -> Processando modelo e em idle
+
+2 cenários possíveis
+  [baseline]
+    - coleta e transmite N bytes a cada intervalo t
+      transmissão demora um intervalo N / Rb
+  
+  [proposto]
+    - coleta N bytes a cada intervalo t
+    - processa n*N bytes a cada intervalo n*t
+      processamento demora um intervalo k
+    - transmite 2 bytes a cada intervalo n*t
+      transmissão demora um intervalo 2 / Rb
+
+
+Para comparação justa, colocar ambos na mesma escala de tempo:
+Definindo P_tx como a potência de transmissão
+Definindo P_idle como a potência do processador em idle
+Definindo P_uC como o incremento de potência do processador rodando o modelo
+Definindo M como o tempo para processar o modelo
+
+Dado um intervalo n*t a energia consumida
+
+E_c1 = n*P_idle*t + n*P_tx*(N / Rb)
+
+E_c2 = n*P_idle*t + P_tx*(2 / Rb) + P_uC*M
+
