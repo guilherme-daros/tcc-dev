@@ -9,7 +9,7 @@ def calc_improvement(p, dw, interval):
     return (bl-bc)/bl
 
 
-def get_min_max_improv(model, tx_interval):
+def get_improvment(model, tx_interval):
     results = {}
 
     for layer_width, model_depths in model_exec_time.items():
@@ -27,10 +27,22 @@ def get_min_max_improv(model, tx_interval):
                 results = results | {
                     f"dw{data_window}_{layer_width}_{model_depth}": imp
                 }
+    return results
+
+
+def get_consumed_energy(model, tx_interval):
+    results = get_improvment(model, tx_interval)
     data = {
         "models": [key for key in results.keys()],
         "improvement": [value for key, value in results.items()],
     }
+
+    return data
+
+
+def get_min_max_improv(model, tx_interval):
+
+    data = get_consumed_energy(model, tx_interval)
 
     min_index = data["improvement"].index(min(data["improvement"]))
     max_index = data["improvement"].index(max(data["improvement"]))
@@ -45,19 +57,3 @@ def get_min_max_improv(model, tx_interval):
             "improvement":  data['improvement'][max_index]*100,
         },
     }
-
-
-def get_plot_data(model, intervals):
-    result = {}
-    for interval in intervals:
-        result = result | {f"{interval}": get_min_max_improv(model, interval)}
-
-    plot_data_x = []
-    plot_data_y = []
-    for key, value in result.items():
-        plot_data_x.append(key)
-        plot_data_y.append(value["max"]["improvement"])
-        plot_data_x.append(key)
-        plot_data_y.append(value["min"]["improvement"])
-
-    return plot_data_x, plot_data_y
