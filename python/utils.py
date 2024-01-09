@@ -25,7 +25,7 @@ def get_improvment(model, tx_interval):
                     i_model, int(data_window), tx_interval)
 
                 results = results | {
-                    f"dw{data_window}_{layer_width}_{model_depth}": imp
+                    f"dw{data_window}_{layer_width[2:]}:{model_depth[2:]}": imp
                 }
     return results
 

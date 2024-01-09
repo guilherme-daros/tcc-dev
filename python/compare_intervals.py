@@ -24,15 +24,16 @@ def get_plot_data(model, intervals):
 def main():
     plot_data_x, plot_data_y = get_plot_data(
         picoW, [0.1, 0.2, 0.5, 1, 2, 5])
-    plt.style.use('ggplot')
 
     plt.figure(figsize=(12, 6))
     plt.scatter(plot_data_x, plot_data_y, marker="_", s=300, label="picoW")
+    plt.xticks([0, 1, 2, 3, 4, 5], [
+               f"{t}s" for t in [0.1, 0.2, 0.5, 1, 2, 5]])
 
     plt.grid()
     plt.legend()
-    plt.xlabel("Interval Between Transmissions [s]", fontsize=16)
-    plt.ylabel("Improvement [%]", fontsize=16)
+    plt.xlabel("Intervalo entre Transmissões [s]", fontsize=16)
+    plt.ylabel("Melhora [%]", fontsize=16)
 
     plt.savefig("compare_intervals.png", bbox_inches='tight')
     # plt.show()
