@@ -3,8 +3,6 @@
 #include "btstack.h"
 #include "math.h"
 
-#include "tensorflow/lite/micro/micro_interpreter.h"
-
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
 #include <stdio.h>

@@ -26,16 +26,18 @@ def main():
         picoW, [0.1, 0.2, 0.5, 1, 2, 5])
 
     plt.figure(figsize=(12, 6))
-    plt.scatter(plot_data_x, plot_data_y, marker="_", s=300, label="picoW")
+    plt.grid(linestyle='-.')
+
+    plt.scatter(plot_data_x, plot_data_y, marker="_", s=250, linewidths=3)
+    plt.yticks(fontsize=15)
+
     plt.xticks([0, 1, 2, 3, 4, 5], [
-               f"{t}s" for t in [0.1, 0.2, 0.5, 1, 2, 5]])
+               f"{t}s" for t in [0.1, 0.2, 0.5, 1, 2, 5]], fontsize=15)
 
-    plt.grid()
-    plt.legend()
-    plt.xlabel("Intervalo entre Transmissões [s]", fontsize=16)
-    plt.ylabel("Melhora [%]", fontsize=16)
+    plt.xlabel("Intervalo entre Transmissões [s]", fontsize=20)
+    plt.ylabel("Melhora [%]", fontsize=20)
 
-    plt.savefig("compare_intervals.png", bbox_inches='tight')
+    plt.savefig("compare_intervals.eps", bbox_inches='tight')
     # plt.show()
 
 

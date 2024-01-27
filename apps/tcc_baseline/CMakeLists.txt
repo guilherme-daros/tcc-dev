@@ -10,15 +10,12 @@ execute_process(
 pico_set_program_name(tcc_baseline "tcc_baseline")
 pico_set_program_version(tcc_baseline "0.1")
 
-include(${CMAKE_SOURCE_DIR}/cmake/tflmicro.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/ble.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/freertos.cmake)
 
 target_include_directories(
   tcc_baseline PRIVATE
     ${CMAKE_SOURCE_DIR}/config
     ${CMAKE_CURRENT_LIST_DIR}/include
-    ${CMAKE_SOURCE_DIR}/lib/freertos/include
 )
 
 add_subdirectory("src")
@@ -32,11 +29,10 @@ target_sources(
 target_link_libraries(
   tcc_baseline
   pico_runtime
-  tflmicro
+  pico_stdlib
   pico_cyw43_arch_none
   pico_btstack_cyw43
   pico_btstack_ble
-  FreeRTOS
 )
 
 pico_enable_stdio_usb(tcc_baseline 1)

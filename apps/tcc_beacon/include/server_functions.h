@@ -3,13 +3,11 @@
 #include "btstack.h"
 #include "math.h"
 
-#include "tensorflow/lite/micro/micro_interpreter.h"
-
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
 #include <stdio.h>
 
-#define ADV_TEMP_HUMI_PERIOD_MS 3000
+#define ADV_TEMP_HUMI_PERIOD_MS 1000
 
 extern uint8_t adv_data[];
 extern uint8_t adv_data_len;

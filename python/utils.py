@@ -1,6 +1,8 @@
 from modeling import *
 from data import *
 
+from scipy.ndimage import median_filter
+
 
 def calc_improvement(p, dw, interval):
     bl = baseline_tx_total(p, dw, interval)
@@ -57,3 +59,9 @@ def get_min_max_improv(model, tx_interval):
             "improvement":  data['improvement'][max_index]*100,
         },
     }
+
+
+def filter(x, N):
+    new_len = len(x)
+    filtered = median_filter(x[x != 0], N)
+    return np.interp(np.linspace(0, len(filtered) - 1, num=new_len), np.arange(len(filtered)), filtered)

@@ -36,7 +36,7 @@ int main() {
 
   printf("vish %d\n", kTxInterval);
 
-  ble_init_all(adv_interval);
+  ble_init_all(0x020);
   hci_power_control(HCI_POWER_ON);
 
   while (true) {

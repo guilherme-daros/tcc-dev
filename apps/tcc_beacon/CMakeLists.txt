@@ -10,9 +10,7 @@ execute_process(
 pico_set_program_name(tcc_beacon "tcc_beacon")
 pico_set_program_version(tcc_beacon "0.1")
 
-include(${CMAKE_SOURCE_DIR}/cmake/tflmicro.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/ble.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/freertos.cmake)
 
 target_include_directories(
   tcc_beacon PRIVATE
@@ -32,11 +30,10 @@ target_sources(
 target_link_libraries(
   tcc_beacon
   pico_runtime
-  tflmicro
+  pico_stdlib
   pico_cyw43_arch_none
   pico_btstack_cyw43
   pico_btstack_ble
-  FreeRTOS
 )
 
 pico_enable_stdio_usb(tcc_beacon 1)
