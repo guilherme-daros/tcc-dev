@@ -23,7 +23,7 @@ def main():
                for x in np.linspace(0, len(power), 31)], fontsize=12)
     plt.yticks(fontsize=12)
 
-    plt.ylim(0, 0.5)
+    plt.ylim(0, 0.25)
     plt.grid()
     fig.savefig("only_model.eps", bbox_inches='tight')
 
