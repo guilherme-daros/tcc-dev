@@ -7,5 +7,5 @@ O trabalho, sob o título *"Uma Análise da Eficiência Energética do Processam
 - Prof. Walter Pereira Carpes Junior, Dr.(UFSC).
 
 #### Links Úteis
-- [Texto](google.com).  
-- [Slides](google.com).
+- [Texto](https://github.com/guilherme-daros/tcc-texto)
+- [Slides](https://github.com/guilherme-daros/tcc-slides)
